@@ -1,0 +1,214 @@
+---
+title: "Statistical Inference Course Project - Part 2: Basic Inferential Data Analysis"
+author: "geotsa"
+date: "September 16, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Task
+In this report we’re analyzing the ToothGrowth data in the R datasets package
+
+## Loading the dataset
+We are loading the necessary libraries:
+
+- The “datasets” that contains the ToothGrowth dataset and
+```{r}
+library(datasets)
+```
+- the graphics grammar“ggplot2” for its faceting capacity
+```{r}
+library(ggplot2)
+```
+We can now load the ToothGrowth dataset
+
+```{r}
+data(ToothGrowth)
+?(ToothGrowth)
+```
+## Overview of the dataset
+The dataset ToothGrowth deals with the Effect of Vitamin C on Tooth Growth in Guinea Pigs. The response is the length of odontoblasts (cells responsible for tooth growth) in 60 guinea pigs. Each animal received one of three dose levels of vitamin C (0.5, 1, and 2 mg/day) by one of two delivery methods, orange juice or ascorbic acid (a form of vitamin C and coded as VC).
+
+---
+
+# Exploratory Data Analysis
+Inspect dataset’s structure
+
+```{r}
+str(ToothGrowth)
+```
+
+its first 5 rows
+```{r}
+head(ToothGrowth)
+```
+and the summaries (five-number summaries and the means) of its variables (columns)
+```{r}
+summary(ToothGrowth)
+```
+We also correct the data, transfmrming the dose variable from numeric to factor as it can get only three values (0.5, 1.0, 2.0)
+```{r}
+ToothGrowth$dose<-as.factor(ToothGrowth$dose)
+```
+Finally we try to understand graphically the basic patterns in odontoblasts growing relating to the delivery method (OJ, VC) and dose levels of vitamin C(0.5, 1.0, 2.0 mg/day)
+```{r}
+ggplot(data=ToothGrowth, aes(x=dose, y=len, fill=supp)) +
+    geom_bar(stat="identity") +
+    facet_grid(. ~ supp) +
+    xlab("Dose(mg/day)") +
+    ylab(expression(paste("Odontoblasts length (",mu,"/m)")))
+```
+## Basic summary of the data.
+The data consist of 60 observations of the length of the odontoblasts. In 30 of them, vitamin C is provided by orange juice (OJ) and in the other 30 by ascorbic acid (VC). In each of these two cases, vitamin C is administered it doses of 0.5, 1.0 or 2.0 mg/day (10 obs for each sub-case, since Mean(dose) = 1.167 = (0.5+1.0 + 2.0) / 3). The exploratory analysis of the data shows that, between the administration of vitamin C by OJ or VC, there is some difference in the length of odontoblasts (especially in the 0.5 and 1.0 mg / day sub-cases). The OJ is appearing a stronger positive relationship with this length.
+
+---
+
+# Inferential Data Analysis
+The foregoing leads to the formulation of more or less reasonable hypotheses. In what follows, we will attempt to test these hypotheses and draw conclusions about their confidence intervals and the statistical significance of observed trends.
+
+## Hypotheses
+**1. Growth by supp (dose 0.5 mg/day case)**
+```{r}
+# We are selecting the obs corresponding to OJ AND dose of 0.5 mg/day
+OJ05 <- ToothGrowth[which(ToothGrowth$supp=="OJ"&ToothGrowth$dose==0.5),1]
+# and calculating their mean
+mean(OJ05)
+```
+```{r}
+# We are selecting the obs corresponding to VC AND dose of 0.5 mg/day
+VC05 <- ToothGrowth[which(ToothGrowth$supp=="VC"&ToothGrowth$dose==0.5),1]
+# and calculating their mean
+mean(VC05)
+```
+```{r}
+# Difference of the means of OJ and VC for a dose of 0.5mg/day
+mean(OJ05)-mean(VC05)
+```
+
+This last number (5.25) makes us want to test the hypothesis that the difference between the two mean values is statistically nsignificant against the alternativy hypothtsis that, for a dose of 0.5 mg/day, the odontoblasts length is significantly bigger in the case of vitamin C delivery by orange juice rather than by ascorbic acid.
+
+```{r}
+t.test(OJ05, VC05, alternative = "g", paired = FALSE, var.equal = FALSE)
+```
+
+Let’s recap:
+
+Higher doses of vitamin C cause more tooth growth.
+
+H0: Difference in means (for 0.5 mg/day) for OJ and for VC is around 0
+
+HA: Difference in means is greater than 0
+
+\textcolor{red}{Since the p-value (0.0031793) is less than the significance level (a=0.05) and the confidence interval is always bigger than 0, there is enough evidence to reject the null hypothesis. Therefore, as for 5 mg/day dose, orange juice has a significantly positive impact in greater tooth growth than ascorbic acid.}
+
+**2. Growth by supp (dose 1.0 mg/day case)**
+```{r}
+# We are selecting the obs corresponding to OJ AND dose of 1.0 mg/day
+OJ10 <- ToothGrowth[which(ToothGrowth$supp=="OJ"&ToothGrowth$dose==1.0),1]
+# and calculating their mean
+mean(OJ10)
+```
+
+```{r}
+# We are selecting the obs corresponding to VC AND dose of 1.0 mg/day
+VC10 <- ToothGrowth[which(ToothGrowth$supp=="VC"&ToothGrowth$dose==1.0),1]
+# and calculating their mean
+mean(VC10)
+```
+```{r}
+# Difference of the means of OJ and VC for a dose of 1.0mg/day
+mean(OJ10)-mean(VC10)
+```
+ 
+
+This last number (5.93) makes us again want to test the hypothesis that the difference between the two mean values is statistically insignificant against the alternativy hypothtsis that, for a dose of 1.0 mg/day, the odontoblasts length is significantly bigger in the case of vitamin C delivery by orange juice rather than by ascorbic acid.
+```{r}
+t.test(OJ10, VC10, alternative = "g", paired = FALSE, var.equal = FALSE)
+```
+Let’s recap:
+
+Higher doses of vitamin C cause more tooth growth.
+
+H0: Difference in means (for 1.0 mg/day) for OJ and for VC is around 0
+
+HA: Difference in means is greater than 0
+
+\textcolor{red}{Since the p-value (0.0005192) is less than the significance level (a=0.05) and the confidence interval is always bigger than 0, there is enough evidence to reject the null hypothesis. Therefore, as for 1.0 mg/day dose, orange juice has a significantly positive impact in greater tooth growth than ascorbic acid.}
+
+**3. Growth by supp (dose 2.0 mg/day case)**
+```{r}
+# We are selecting the obs corresponding to OJ AND dose of 2.0 mg/day
+OJ20 <- ToothGrowth[which(ToothGrowth$supp=="OJ"&ToothGrowth$dose==2.0),1]
+# and calculating their mean
+mean(OJ20)
+```
+```{r}
+# We are selecting the obs corresponding to VC AND dose of 2.0 mg/day
+VC20 <- ToothGrowth[which(ToothGrowth$supp=="VC"&ToothGrowth$dose==2.0),1]
+# and calculating their mean
+mean(VC20)
+```
+```{r}
+# Difference of the means of OJ and VC for a dose of 2.0 mg/day
+mean(OJ20)-mean(VC20)
+```
+
+Contrary to the previous cases this last number (-0.08) doesn’t seem significant but we will test the hypothesis that the difference between the two mean values is statistically insignificant agaist the alternative hypothesis that (always for a dose of 2.0 mg/day) the odontoblasts length difference is significantly different in the case of vitamin C delivery by orange juice rather than by ascorbic acid.
+```{r}
+t.test(OJ20, VC20, alternative = "t", paired = FALSE, var.equal = FALSE)
+```
+Let’s recap:
+
+Higher doses of vitamin C cause more tooth growth.
+
+H0: Difference in means (for 2.0 mg/day) for OJ and for VC is around 0
+
+HA: Difference in means is *not equal to 0
+
+\textcolor{red}{The p-value (0.9638516) is greater than the significance level (a=0.05) and the confidence interval contains zero so that we can say that there is not enough evidence to reject the null hypothesis. Therefore, application methods have no impact on tooth growth in the case of doses of 2.0 mg/day.}
+
+   
+
+**4. Growth by supp (general case)**
+```{r}
+# We are selecting the obs corresponding to OJ
+OJgen <- ToothGrowth[which(ToothGrowth$supp=="OJ"),1]
+# and calculating their mean
+mean(OJgen)
+```
+```{r}
+# We are selecting the obs corresponding to VC
+VCgen <- ToothGrowth[which(ToothGrowth$supp=="VC"),1]
+# and calculating their mean
+mean(VCgen)
+```
+```{r}
+# Difference of the means of OJ and VC
+mean(OJgen)-mean(VCgen)
+```
+
+This last number (3.7) makes us again want to test the hypothesis that the difference between the two mean values is statistically insignificant or not. The alternative hypothesis is that, independently from the dose, the odontoblasts length is significantly bigger in the case of vitamin C delivery by orange juice rather than by ascorbic acid.
+```{r}
+t.test(OJgen, VCgen, alternative = "g", paired = FALSE, var.equal = FALSE)
+```
+Let’s recap:
+
+Higher doses of vitamin C cause more tooth growth.
+
+H0: Difference in means for OJ and for VC is around 0
+
+HA: Difference in means is greater than 0
+
+\textcolor{red}{The p-value (0.0303173) is less than the significance level (a=0.05) and the confidence interval contains zero so that we can say that there is enough evidence to reject the null hypothesis. Therefore, even barely, the t.test shows that the application methods, irrespective of dose quantity, have a significant impact on tooth growth.}
+
+# Assumptions
+The following conclusions are made on the basis of the assumptions that:
+
+- the observations in the sample are effectively independent and identically distributed random variables (i.i.d.)
+- the sample is representative of the population
+
+# Conclusions
+OJ ensures more tooth growth than VC for dosages 0.5 & 1.0. OJ and VC gives the same amount of tooth growth for dose amount 2.0 mg/day. For the entire trail we can conclude OJ is more effective than VC for the general case scenario.

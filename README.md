@@ -1,2 +1,10 @@
-# Statistical_Inference-_Simulation_n_Inferential_Data_Analysis
-In this project, based on the *mtcars* dataset (from the 1974 Motor Trend US magazine) we are interested in the comprehension of the relationships between dataset's cars' fuel consumption and a set of variables, trying, in particular, to model and quantify the one between the consumption and the car's transimission type.
+## Statistical Inference (Skills Demo Project): Simulation & Inferential Data Analysis
+The project consists of two parts:
+
+1. A simulation exercise.
+In this report we’re investigating the exponential distribution in R and compare it with the Central Limit Theorem,
+
+2. Basic inferential data analysis.
+In this report we’re analyzing the ToothGrowth data in the R datasets package.
+
+The project was carried out as a final (peer-reviewed) assignment  within the Coursera course [Statistical Inference](http://www.coursera.org/learn/statistical-inference) of the [Johns Hopkins University Data Science Specialization](http://www.coursera.org/specializations/jhu-data-science) in September 2019
